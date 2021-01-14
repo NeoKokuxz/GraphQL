@@ -3,7 +3,7 @@
 ## Query
 each query includes fields and each field is a type
 
-```gragh ql
+```graphql
 //Indicates this is a query
 query {
   toy {
@@ -11,6 +11,9 @@ query {
     name
     id
     genre
+    owner {
+      name
+    }
   }
 }
 ```
