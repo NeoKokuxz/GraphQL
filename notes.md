@@ -4,7 +4,7 @@
 each query includes fields and each field is a type
 
 ```graphql
-//Indicates this is a query
+#Indicates this is a query
 query {
   toy {
     //fields from toy
