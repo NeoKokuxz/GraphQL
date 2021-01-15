@@ -1,0 +1,25 @@
+{
+    "name": "graphqldemo",
+    "version": "1.0.0",
+    "description": "GraphqlDemo",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NeoKokuxz/GraphQL.git"
+    },
+    "keywords": [
+        "GraphQL"
+    ],
+    "author": "Neo Chen",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/NeoKokuxz/GraphQL/issues"
+    },
+    "homepage": "https://github.com/NeoKokuxz/GraphQL#readme",
+    "dependencies": {
+        "express": "^4.17.1"
+    }
+}
