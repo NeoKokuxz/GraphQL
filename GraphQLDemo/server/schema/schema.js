@@ -10,7 +10,8 @@ const {
     GraphQLString,
     GraphQLFloat,
     GraphQLSchema,
-    GraphQLBoolean
+    GraphQLBoolean,
+    GraphQLList
 } = graphql
 
 //dummy data
@@ -24,19 +25,26 @@ var foodData = [
 ]
 
 var specialData = [
-    { id: '111', name: 'Orange Chicken', price: 10.75, edit: false, special: 'Chief' },
-    { id: '112', name: 'General Tso Chicken', price: 10.75, edit: true, special: 'Chief' },
-    { id: '122', name: 'Sweet Sour Chicken', price: 5.5, edit: true, special: 'Chief' },
-    { id: '133', name: 'Pork Lo Mein', price: 1.6, edit: false, special: 'Dinner' },
-    { id: '144', name: 'Shrimp Chow Mein', price: 7.5, edit: true, special: 'Lunch' },
-    { id: '155', name: 'Mixed Vegetable', price: 2.5, edit: true, special: 'Dinner' },
+    { id: '111', name: 'Orange Chicken', price: 10.75, edit: false, special: 'Chief', userId: '1' },
+    { id: '112', name: 'General Tso Chicken', price: 10.75, edit: true, special: 'Chief', 'userId': 1 },
+    { id: '122', name: 'Sweet Sour Chicken', price: 5.5, edit: true, special: 'Chief', userId: '2' },
+    { id: '133', name: 'Pork Lo Mein', price: 1.6, edit: false, special: 'Dinner', userId: '3' },
+    { id: '144', name: 'Shrimp Chow Mein', price: 7.5, edit: true, special: 'Lunch', userId: '4' },
+    { id: '155', name: 'Mixed Vegetable', price: 2.5, edit: true, special: 'Dinner', userId: '4' },
 ]
 
 var veganData = [
-    { id: '233', name: 'Steam Mixed Vegetable', price: 10.5 },
-    { id: '234', name: 'Steam Shrimp with Mixed Vegetable', price: 10.5 },
-    { id: '235', name: 'Steam Pork with Mixed Vegetable', price: 10.5 },
-    { id: '236', name: 'Steam Chicken with Mixed Vegetable', price: 10.5 }
+    { id: '233', name: 'Steam Mixed Vegetable', price: 10.5, userId: '1' },
+    { id: '234', name: 'Steam Shrimp with Mixed Vegetable', price: 10.5, userId: '2' },
+    { id: '235', name: 'Steam Pork with Mixed Vegetable', price: 10.5, userId: '3' },
+    { id: '236', name: 'Steam Chicken with Mixed Vegetable', price: 10.5, userId: '4' }
+]
+
+var userData = [
+    { id: '1', name: 'Jack', age: 20 },
+    { id: '2', name: 'Neo', age: 21 },
+    { id: '3', name: 'Aaron', age: 22 },
+    { id: '4', name: 'Tyler', age: 23 },
 ]
 
 //Create Types
@@ -60,7 +68,13 @@ const SpecialFoodType = new GraphQLObjectType({
         name: { type: GraphQLString },
         price: { type: GraphQLFloat },
         edit: { type: GraphQLBoolean },
-        special: { type: GraphQLString }
+        special: { type: GraphQLString },
+        user: {
+            type: UserType,
+            resolve(parent, args) {
+                return _.find(userData, { id: parent.userId })
+            }
+        }
     })
 })
 
@@ -70,7 +84,31 @@ const VegFoodType = new GraphQLObjectType({
     fields: () => ({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
-        price: { type: GraphQLFloat }
+        price: { type: GraphQLFloat },
+        user: {
+            type: UserType,
+            //resolve here refer to VegFoodType
+            resolve(parent, args) {
+                return _.find(userData, { id: parent.userId })
+            }
+        }
+    })
+})
+
+const UserType = new GraphQLObjectType({
+    name: "User",
+    description: 'This is user type',
+    fields: () => ({
+        id: { type: GraphQLID },
+        name: { type: GraphQLString },
+        age: { type: GraphQLFloat },
+        //Fetch all data for user
+        vegFood: {
+            type: new GraphQLList(VegFoodType),
+            resolve(parent, args) {
+                return _.filter(veganData, { userId: parent.id }) //Go to veganData look up the userId from it and match from parent id
+            }
+        }
     })
 })
 
@@ -133,6 +171,16 @@ const RootQuery = new GraphQLObjectType({
             },
             resolve(parent, args) {
                 return _.find(veganData, { name: args.name })
+            }
+        },
+
+        user: {
+            type: UserType,
+            args: {
+                id: { type: GraphQLID }
+            },
+            resolve(parent, args) {
+                return _.find(userData, { id: args.id })
             }
         }
     }
