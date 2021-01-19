@@ -85,6 +85,7 @@ const VegFoodType = new GraphQLObjectType({
         id: { type: GraphQLID },
         name: { type: GraphQLString },
         price: { type: GraphQLFloat },
+        userId: { type: GraphQLID },
         user: {
             type: UserType,
             //resolve here refer to VegFoodType
@@ -107,6 +108,13 @@ const UserType = new GraphQLObjectType({
             type: new GraphQLList(VegFoodType),
             resolve(parent, args) {
                 return _.filter(veganData, { userId: parent.id }) //Go to veganData look up the userId from it and match from parent id
+            }
+        },
+
+        specialFood: {
+            type: new GraphQLList(SpecialFoodType),
+            resolve(parent, args) {
+                return _.filter(specialData, { userId: parent.id })
             }
         }
     })
@@ -182,11 +190,95 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 return _.find(userData, { id: args.id })
             }
+        },
+
+        //Return the list of users
+        userList: {
+            type: GraphQLList(UserType),
+            resolve(parent, args) {
+                return userData;
+            }
+        },
+
+        vegList: {
+            type: GraphQLList(VegFoodType),
+            resolve(parent, args) {
+                return veganData;
+            }
+        }
+    }
+})
+
+//Mutations
+const Mutation = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: {
+        //Create User
+        createUser: {
+            type: UserType,
+            args: {
+                id: { type: GraphQLID }, //Id will be automatic with DB
+                name: { type: GraphQLString },
+                age: { type: GraphQLString }
+            },
+            resolve(parent, args) {
+                let user = {
+                    name: args.name,
+                    id: args.id,
+                    age: args.age
+                }
+                return user;
+            }
+
+        },
+        //Create SpecialFood
+        createSpecialFood: {
+            type: SpecialFoodType,
+            args: {
+                id: { type: GraphQLID },
+                name: { type: GraphQLString },
+                price: { type: GraphQLFloat },
+                edit: { type: GraphQLBoolean },
+                special: { type: GraphQLString },
+                //userId: { type: GraphQLID }
+            },
+            resolve(parent, args) {
+                let specialFood = {
+                    id: args.id,
+                    name: args.name,
+                    price: args.price,
+                    edit: args.edit,
+                    special: args.special,
+                    userId: args.userId
+
+                }
+                return specialFood;
+            }
+        },
+        //Create VegFood
+        createVegFood: {
+            type: VegFoodType,
+            args: {
+                name: { type: GraphQLString },
+                id: { type: GraphQLID },
+                price: { type: GraphQLFloat },
+                userId: { type: GraphQLID }
+            },
+            resolve(parent, args) {
+                let vegFood = {
+                    name: args.name,
+                    id: args.id,
+                    price: args.price,
+                    userId: args.userId
+                }
+                return vegFood;
+            }
         }
     }
 })
 
 //Export the module 
 module.exports = new GraphQLSchema({
-    query: RootQuery
+    query: RootQuery,
+    mutation: Mutation
 })
