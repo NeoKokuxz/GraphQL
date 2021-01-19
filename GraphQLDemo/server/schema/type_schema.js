@@ -1,5 +1,8 @@
 const graphql = require('graphql');
 
+//lodash
+var _ = require('lodash')
+
 const {
     GraphQLObjectType,
     GraphQLID,
@@ -9,47 +12,8 @@ const {
     GraphQLFloat,
     GraphQLInt,
     GraphQLSchema,
+    GraphQLNonNull
 } = graphql
-
-
-//Types goes before the root query
-const Anthony = new GraphQLObjectType({
-    name: "AnthonyChen",
-    description: "Test",
-    fields: () => ({
-        id: { type: GraphQLID },
-        name: { type: GraphQLString },
-        age: { type: GraphQLString }
-    })
-})
-
-//RootQuery
-const RootQuery = new GraphQLObjectType({
-    name: 'RootQueryType',
-    description: "This is the root query",
-    fields: {
-        anthony: {
-            type: Anthony,
-            args: {
-                id: {
-                    type: GraphQLID
-                }
-            },
-            resolve(parent, args) {
-                return null;
-            }
-        },
-        //Here goes all the types like user, location, quest
-        anthonyList: {
-            type: GraphQLList(Anthony),
-            resolve(parent, args) {
-                return AnthonyData;
-            }
-        }
-    }
-})
-
-//Type
 
 ///Scalar Type
 /*
@@ -60,23 +24,60 @@ const RootQuery = new GraphQLObjectType({
     ID
 */
 
-const AnthonyData = [
-    { id: '1', name: 'Anthony Chen', age: '10' },
-    { id: '2', name: 'Neo Chen', age: '25' }
+const QuestData = [
+    { id: '1', userName: 'Neo Chen', detail: 'This is a test quest by Neo', date: '2021-01-19', location: 'NYC', completion: false, reward: '50.00 USD' },
+    { id: '2', userName: 'Jack Camas', detail: 'This is a test quest by Jack', date: '2021-01-19', location: 'NYC', completion: false, reward: '50.00 USD' },
+    { id: '3', userName: 'Tyler Zhao', detail: 'This is a test quest by Tyler', date: '2021-01-19', location: 'NYC', completion: false, reward: '50.00 USD' },
+    { id: '4', userName: 'Youssef Saab', detail: 'This is a test quest Youssef', date: '2021-01-19', location: 'NYC', completion: true, reward: '50.00 USD' },
+    { id: '5', userName: 'Aaron Nunuz', detail: 'This is a test quest by Aaron', date: '2021-01-19', location: 'NYC', completion: true, reward: '50.00 USD' }
 ]
 
+//Types must goes before the root query
 const Quest = new GraphQLObjectType({
     name: 'Quest',
     description: 'This is quest type',
     fields: () => ({
         id: { type: GraphQLID },
-        userName: { type: GraphQLString },
-        detail: { type: GraphQLString },
+        userName: { type: new GraphQLNonNull(GraphQLString) },
+        detail: { type: new GraphQLNonNull(GraphQLString) },
         date: { type: GraphQLString },
         location: { type: GraphQLString },
         completion: { type: GraphQLBoolean },
-        reward: { type: GraphQLFloat }
+        reward: { type: GraphQLString },
+
+        //This will return the parent quest object as a field
+        TestQuest: {
+            type: Quest,
+            resolve(parent, args) {
+                return parent;
+            }
+        }
     })
+})
+
+//RootQuery
+const RootQuery = new GraphQLObjectType({
+    name: 'RootQueryType',
+    description: "This is the root query",
+    fields: {
+        quest: {
+            type: Quest,
+            args: {
+                id: { type: GraphQLID }
+            },
+            resolve(parent, args) {
+                return _.find(QuestData, { id: args.id })
+            }
+        },
+
+        quests: {
+            type: GraphQLList(Quest),
+            resolve(parent, args) {
+                return QuestData;
+            }
+        }
+    }
+
 })
 
 //Export the module 
