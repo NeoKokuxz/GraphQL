@@ -205,7 +205,22 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args) {
                 return veganData;
             }
+        },
+
+        specialList: {
+            type: GraphQLList(SpecialFoodType),
+            resolve(parent, args) {
+                return specialData;
+            }
+        },
+
+        foodList: {
+            type: GraphQLList(FoodType),
+            resolve(parent, args) {
+                return foodData;
+            }
         }
+
     }
 })
 
