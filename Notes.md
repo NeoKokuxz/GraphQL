@@ -22,7 +22,7 @@ query {
 
 ### Root Query
 > The root of all queries
-```graphql
+```javascript
 const RootQuery = new GraphQLObjectType({
     name: 'FoodRootQuery',
     description: 'This is Root Query desc',
@@ -59,7 +59,7 @@ in GraphQL console:
 ## Mutation
 
 - mutation will create the date or update the data
-```
+```javascript
 const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
@@ -84,7 +84,7 @@ const Mutation = new GraphQLObjectType({
 ```
 
 ## Type 
-```
+```javascript
 user: {
             type: UserType,
             args: {
