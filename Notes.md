@@ -83,7 +83,15 @@ const Mutation = new GraphQLObjectType({
 })
 ```
 
-## Type 
+## GraphQL Type in Express 
+
+- GraphQLID
+- GraphQLString
+- GraphQLFloat
+- GraphQLBoolean
+- GraphQLObjectType (Declare the type as a GraphQL object type
+- GraphQLSchema (Define the schema and use for export
+- GraphQLList (Declare the list 
 ```javascript
 user: {
             type: UserType,
@@ -95,5 +103,18 @@ user: {
             }
         },
 ```
+### Scalar Type
+
+
+
+## List
+Create list to return all of the same type
+```graphql
+newList: {
+  type: GraphQLList(newType),
+  resolve(parent, args){
+    return listData;
+  }
+}
 
 
