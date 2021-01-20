@@ -1,5 +1,10 @@
 const graphql = require('graphql');
 
+//Model import
+const user = require('../model/User')
+const quest = require('../model/Quest')
+const location = require('../model/Location')
+
 //lodash
 var _ = require('lodash')
 
