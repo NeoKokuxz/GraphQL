@@ -18,4 +18,4 @@ const questSchema = new MSchema({
     reward: String
 })
 
-module.exports = mongoose.model('quest', questSchema);
+module.exports = mongoose.model('Quest', questSchema);

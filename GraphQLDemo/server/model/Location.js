@@ -6,7 +6,7 @@ const MSchema = mongoose.Schema;
 const locationSchema = new MSchema({
     latitude: Number,
     longitude: Number,
-    userId: String
+    questId: String
 })
 
-module.exports = mongoose.model('location', locationSchema);
+module.exports = mongoose.model('Location', locationSchema);
