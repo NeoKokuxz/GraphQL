@@ -4,11 +4,13 @@ const app = express();
 
 const { graphqlHTTP } = require('express-graphql');
 
-const schema = require('./schema/schema');
+//const schema = require('./server/schema/schema');
 
-const quest_schema = require('./schema/quest_schema')
+const quest_schema = require('./server/schema/quest_schema')
 
 const mongoose = require('mongoose')
+
+const port = process.env.PORT || 4000;
 
 app.use('/graphql', graphqlHTTP({
     graphiql: true,
@@ -16,12 +18,15 @@ app.use('/graphql', graphqlHTTP({
     schema: quest_schema
 }))
 
-app.listen(4000, () => {
-    console.log('Listening to port 4000!');
+app.listen(port, () => {
+    console.log('Listening to port' + port);
 })
 
 //MongoDB 
 const url = `mongodb+srv://user_admin:db123@cluster0.5maki.mongodb.net/demodb?retryWrites=true&w=majority`;
+
+//CORS
+
 
 const connectionParams = {
     useNewUrlParser: true,

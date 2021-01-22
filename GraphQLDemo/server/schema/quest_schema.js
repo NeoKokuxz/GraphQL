@@ -135,8 +135,8 @@ const Mutation = new GraphQLObjectType({
         createUser: {
             type: UserType,
             args: {
-                username: { type: GraphQLString },
-                password: { type: GraphQLString }
+                username: { type: new GraphQLNonNull(GraphQLString) },
+                password: { type: new GraphQLNonNull(GraphQLString) }
             },
             resolve(parent, args) {
                 let user = new User({
@@ -193,9 +193,137 @@ const Mutation = new GraphQLObjectType({
                 location.save();
                 return location;
             }
+        },
+
+        //Update User
+        UpdateUser: {
+            type: UserType,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLID) },
+                newUsername: { type: GraphQLString },
+                newPassword: { type: GraphQLString }
+            },
+            resolve(parent, args) {
+                return updatedUser = User.findByIdAndUpdate(
+                    args.id, {
+                        $set: {
+                            username: args.newUsername,
+                            password: args.newPassword
+                        }
+                    }, { new: true } //Send back the updated object type
+                )
+            }
+        },
+
+        //Update Quest
+        UpdateQuest: {
+            type: QuestType,
+            args: {
+                id: { type: GraphQLNonNull(GraphQLID) },
+                newName: { type: GraphQLString },
+                newDetail: { type: GraphQLString },
+                newDate: { type: GraphQLString },
+                newLocation: { type: GraphQLString },
+                newCompletion: { type: GraphQLBoolean },
+                newReward: { type: GraphQLString },
+            },
+            resolve(parent, args) {
+
+                if (args.newName !== undefined) {
+                    partialUpdate(args.id, 'name', args.newName)
+                }
+                if (args.newDetail !== undefined) {
+                    partialUpdate(args.id, 'detail', args.newDetail)
+                }
+                if (args.newDate !== undefined) {
+                    partialUpdate(args.id, 'date', args.newDate)
+                }
+                if (args.newLocation !== undefined) {
+                    partialUpdate(args.id, 'location', args.newLocation)
+                }
+                if (args.newCompletion !== undefined) {
+                    partialUpdate(args.id, 'completion', args.newCompletion)
+                }
+                if (args.newReward !== undefined) {
+                    partialUpdate(args.id, 'reward', args.newReward)
+                }
+                return Quest.findById(args.id)
+            }
+        },
+
+        //Delete
+        DeleteQuest: {
+            type: QuestType,
+            args: {
+                id: { type: GraphQLNonNull(GraphQLID) }
+            },
+            resolve(parent, args) {
+                return Quest.findByIdAndRemove(args.id);
+            }
+        },
+
+        DeleteUser: {
+            type: UserType,
+            args: {
+                id: { type: GraphQLNonNull(GraphQLID) }
+            },
+            resolve(parent, args) {
+                return User.findByIdAndRemove(args.id);
+            }
         }
     }
 })
+
+
+function partialUpdate(id, field, data) {
+
+    if (field === 'name') {
+        Quest.findByIdAndUpdate(id, {
+            $set: {
+                name: data
+            }
+        }, { new: true }).exec();
+    }
+    if (field === 'detail') {
+        Quest.findByIdAndUpdate(id, {
+            $set: {
+                detail: data
+            }
+        }, { new: true }).exec();
+    }
+    if (field === 'date') {
+        Quest.findByIdAndUpdate(id, {
+            $set: {
+                date: data
+            }
+        }, { new: true }).exec();
+    }
+    if (field === 'location') {
+        Quest.findByIdAndUpdate(id, {
+            $set: {
+                location: data
+            }
+        }, { new: true }).exec();
+    }
+    if (field === 'completion') {
+        Quest.findByIdAndUpdate(id, {
+            $set: {
+                completion: data
+            }
+        }, { new: true }).exec();
+    }
+    if (field === 'reward') {
+        Quest.findByIdAndUpdate(id, {
+            $set: {
+                reward: data
+            }
+        }, { new: true }).exec();
+    }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 //Export the module 
 module.exports = new GraphQLSchema({
